@@ -36,6 +36,7 @@ void read_task_info_to_json(cJSON *json)
     {
         cJSON *task = cJSON_CreateObject();
         cJSON_AddStringToObject(task, "name", pxTaskStatusArray[x].pcTaskName);
+        cJSON_AddNumberToObject(task, "task_number", pxTaskStatusArray[x].xTaskNumber);
         cJSON_AddNumberToObject(task, "priority", pxTaskStatusArray[x].uxCurrentPriority);
         cJSON_AddNumberToObject(task, "state", pxTaskStatusArray[x].eCurrentState);
         cJSON_AddNumberToObject(task, "stack", pxTaskStatusArray[x].usStackHighWaterMark);
