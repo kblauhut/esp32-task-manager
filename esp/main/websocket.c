@@ -43,20 +43,13 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
         break;
     case WEBSOCKET_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "WEBSOCKET_EVENT_DISCONNECTED");
-        log_error_if_nonzero("HTTP status code", data->error_handle.esp_ws_handshake_status_code);
-        if (data->error_handle.error_type == WEBSOCKET_ERROR_TYPE_TCP_TRANSPORT)
-        {
-            log_error_if_nonzero("reported from esp-tls", data->error_handle.esp_tls_last_esp_err);
-            log_error_if_nonzero("reported from tls stack", data->error_handle.esp_tls_stack_err);
-            log_error_if_nonzero("captured as transport's socket errno", data->error_handle.esp_transport_sock_errno);
-        }
         break;
     case WEBSOCKET_EVENT_DATA:
         ESP_LOGI(TAG, "WEBSOCKET_EVENT_DATA");
-        ESP_LOGI(TAG, "Received opcode=%d", data->op_code);
+        ESP_LOGI(TAG, "Ws opcode=%d", data->op_code);
         if (data->op_code == 0x08 && data->data_len == 2)
         {
-            ESP_LOGW(TAG, "Received closed message with code=%d", 256 * data->data_ptr[0] + data->data_ptr[1]);
+            ESP_LOGW(TAG, "Closing event received");
         }
         else
         {
@@ -71,19 +64,10 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
             }
         }
 
-        // If received data contains json structure it succeed to parse
         ESP_LOGW(TAG, "Total payload length=%d, data_len=%d, current payload offset=%d\r\n", data->payload_len, data->data_len, data->payload_offset);
-
         break;
     case WEBSOCKET_EVENT_ERROR:
         ESP_LOGI(TAG, "WEBSOCKET_EVENT_ERROR");
-        log_error_if_nonzero("HTTP status code", data->error_handle.esp_ws_handshake_status_code);
-        if (data->error_handle.error_type == WEBSOCKET_ERROR_TYPE_TCP_TRANSPORT)
-        {
-            log_error_if_nonzero("reported from esp-tls", data->error_handle.esp_tls_last_esp_err);
-            log_error_if_nonzero("reported from tls stack", data->error_handle.esp_tls_stack_err);
-            log_error_if_nonzero("captured as transport's socket errno", data->error_handle.esp_transport_sock_errno);
-        }
         break;
     }
 }
